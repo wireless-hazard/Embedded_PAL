@@ -70,6 +70,7 @@ void i2c_read(const i2c_handler_t *handler, uint8_t address, uint16_t reg_addr, 
 
 void i2c_deinit(i2c_handler_t *handler)
 {
+    close(handler->fd);
     destroy_i2c_handler(handler);
 }
 
