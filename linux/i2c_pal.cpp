@@ -68,9 +68,37 @@ void i2c_read(const i2c_handler_t *handler, uint8_t address, uint16_t reg_addr, 
     }
 }
 
+int32_t i2c_write(const i2c_handler_t *handler, uint8_t address, uint16_t reg_addr, uint8_t value)
+{
+    if (ioctl(handler->fd, I2C_SLAVE, address) < 0) {
+        return -1;
+    }
+
+    return i2c_smbus_write_byte_data(handler->fd, reg_addr, value);
+}
+
+int32_t i2c_write(const i2c_handler_t *handler, uint8_t address, uint16_t reg_addr, uint16_t value)
+{
+    if (ioctl(handler->fd, I2C_SLAVE, address) < 0) {
+        return -1;
+    }
+
+    return i2c_smbus_write_word_data(handler->fd, reg_addr, value);
+}
+
+void i2c_write(const i2c_handler_t *handler, uint8_t address, uint16_t reg_addr, uint8_t *input_buffer, uint8_t count)
+{
+    if (ioctl(handler->fd, I2C_SLAVE, address) >= 0)
+    {
+        if (input_buffer != nullptr)
+        {
+            write(handler->fd, &input_buffer[0], count);
+        }
+    }
+}
+
 void i2c_deinit(i2c_handler_t *handler)
 {
-    close(handler->fd);
     destroy_i2c_handler(handler);
 }
 
